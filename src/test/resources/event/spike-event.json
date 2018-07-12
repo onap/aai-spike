@@ -1,0 +1,35 @@
+{
+  "header": {
+    "request-id": "addfff68-fff3-4084-909d-7d55787c2468",
+    "timestamp": "20180611T144752Z",
+    "source-name": "SPIKE",
+    "event-type": "update-notification"
+  },
+  "body": {
+    "operation": "CREATE",
+    "transaction-id": "addfff68-fff3-4084-909d-7d55787c2468",
+    "timestamp": 1528714625713,
+    "vertex": {
+      "key": "f62b8fb4-506b-48a8-8578-56bb95ad64ae",
+      "schema-version": "V13",
+      "type": "pserver",
+      "properties": {
+        "hostname": "ma-host2-20180611-01",
+        "ptnii-equip-name": "e-name",
+        "equip-type": "server",
+        "equip-vendor": "HP",
+        "equip-model": "DL380p-nd",
+        "fqdn": "myhost.onap.net",
+        "ipv4-oam-address": "1.2.3.4",
+        "in-maint": "false",
+        "resource-version": "1477013499",
+        "purpose": "my-purpose",
+        "last-mod-source-of-truth": "ma-postman",
+        "aai-node-type": "pserver",
+        "aai-created-ts": 1528714624711,
+        "aai-last-mod-ts": 1528714624711,
+        "source-of-truth": "ma-postman"
+      }
+    }
+  }
+}

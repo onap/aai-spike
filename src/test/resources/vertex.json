@@ -1,0 +1,23 @@
+{  
+   "operation":"REPLACE",
+   "timestamp":1497966206430,
+   "vertex":{  
+      "type":"pserver",
+      "properties":{  
+         "ptnii-equip-name":"mtanj119snd",
+         "hostname":"mtanj119snd",
+         "equip-type":"server-new-nitin11-SURE",
+         "equip-vendor":"HP",
+         "equip-model":"DL380p-nd",
+         "in-maint":false,
+         "fqdn":"mtanjrsv119.mtanj.sbcglobal.net",
+         "purpose":"",
+         "resource-version":"1477013499",
+         "ipv4-oam-address":"135.182.138.60",
+         "number-of-cpus":"33"
+      },
+      "relationship":false,
+      "object":true,
+      "key":286802000
+   }
+}

@@ -1,0 +1,35 @@
+{
+  "header": {
+    "event-type": "update-notification-raw",
+    "request-id": "addfff68-fff3-4084-909d-7d55787c2468",
+    "source-name": "CHAMP",
+    "timestamp": "20180611T105705Z"
+  },
+  "body": {
+    "transaction-id": "addfff68-fff3-4084-909d-7d55787c2468",
+    "vertex": {
+      "type": "pserver",
+      "key": 327684296,
+      "properties": {
+        "ptnii-equip-name": "e-name",
+        "aai-last-mod-ts": 1528714624711,
+        "equip-type": "server",
+        "equip-vendor": "HP",
+        "fqdn": "myhost.onap.net",
+        "purpose": "my-purpose",
+        "aai-created-ts": 1528714624711,
+        "ipv4-oam-address": "1.2.3.4",
+        "source-of-truth": "ma-postman",
+        "aai-node-type": "pserver",
+        "hostname": "ma-host2-20180611-01",
+        "equip-model": "DL380p-nd",
+        "in-maint": "false",
+        "aai-uuid": "f62b8fb4-506b-48a8-8578-56bb95ad64ae",
+        "resource-version": "1477013499",
+        "last-mod-source-of-truth": "ma-postman"
+      }
+    },
+    "operation": "STORE",
+    "timestamp": 1528714625713
+  }
+}

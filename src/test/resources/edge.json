@@ -1,0 +1,41 @@
+{  
+   "operation":"REPLACE",
+   "timestamp":1498228957498,
+   "relationship":{  
+      "type":"org.onap.relationships.inventory.BelongsTo",
+      "properties":{  
+        "contains-other-v": "NONE",
+        "delete-other-v": "NONE",
+        "SVC-INFRA": "NONE",
+        "prevent-delete": "NONE"
+      },
+      "target":{  
+         "type":"tenant",
+         "properties":{  
+            "resource-version":"",
+            "tenant-id":"q6K7tkSslA0BX54i5ml5ITDrBAjC9",
+            "tenant-name":"j"
+         },
+         "relationship":false,
+         "object":true,
+         "key":369569896
+      },
+      "source":{  
+         "type":"vserver",
+         "properties":{  
+            "in-maint":false,
+            "resource-version":"",
+            "vserver-name":"6QyD5JV39FG4Wu1Gocg",
+            "vserver-id":"XS70wmbPIrjVof58w84ZbdMzC",
+            "vserver-selflink":"lCj4vM15EX8tPq0yX7w9l",
+            "is-closed-loop-disabled":false
+         },
+         "relationship":false,
+         "object":true,
+         "key":246677624
+      },
+      "relationship":true,
+      "object":false,
+      "key":"655e6l-6415yg-ag45-42v5o8"
+   }
+}
