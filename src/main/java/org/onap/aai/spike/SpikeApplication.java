@@ -1,9 +1,9 @@
 /**
- * ============LICENSE_START=======================================================
+ * ﻿============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
- * Copyright © 2017-2018 European Software Marketing Ltd.
+ * Copyright © 2017-2018 Amdocs
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@ import org.eclipse.jetty.util.security.Password;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Import;
 
 /**
  * Spike service Spring Boot Application
  */
 @SpringBootApplication
-@ImportResource({"file:${SERVICE_BEANS}/*.xml"})
+@Import({ EventConsumerConfiguration.class, EventPublisherConfiguration.class })
 public class SpikeApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
