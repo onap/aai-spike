@@ -25,13 +25,13 @@ import org.eclipse.jetty.util.security.Password;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ImportResource;
 
 /**
  * Spike service Spring Boot Application
  */
 @SpringBootApplication
-@Import({ EventConsumerConfiguration.class, EventPublisherConfiguration.class })
+@ImportResource({"file:${SERVICE_BEANS}/*.xml"})
 public class SpikeApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

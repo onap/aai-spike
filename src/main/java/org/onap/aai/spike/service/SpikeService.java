@@ -21,7 +21,6 @@
 package org.onap.aai.spike.service;
 
 import java.util.Timer;
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.onap.aai.cl.api.Logger;
 import org.onap.aai.cl.eelf.LoggerFactory;
@@ -32,11 +31,7 @@ import org.onap.aai.spike.schema.EdgeRulesLoader;
 import org.onap.aai.spike.schema.OXMModelLoader;
 import org.onap.aai.spike.util.SpikeConstants;
 import org.onap.aai.spike.util.SpikeProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
-@Component
 public class SpikeService {
 
     private EventConsumer consumer;
@@ -44,14 +39,11 @@ public class SpikeService {
     private static Logger logger = LoggerFactory.getInstance().getLogger(SpikeService.class.getName());
     private Timer timer;
 
-    @Autowired
-    public SpikeService(@Qualifier("dmaapEventConsumer") EventConsumer consumer,
-            @Qualifier("dmaapEventPublisher") EventPublisher publisher) {
+    public SpikeService(EventConsumer consumer, EventPublisher publisher) {
         this.consumer = consumer;
         this.publisher = publisher;
     }
 
-    @PostConstruct
     public void startup() throws Exception {
 
         // Load models
