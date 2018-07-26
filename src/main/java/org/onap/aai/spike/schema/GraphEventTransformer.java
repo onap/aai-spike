@@ -23,9 +23,6 @@ package org.onap.aai.spike.schema;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import com.google.common.base.CaseFormat;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContext;
@@ -36,6 +33,9 @@ import org.onap.aai.spike.event.incoming.GizmoEdge;
 import org.onap.aai.spike.event.incoming.GizmoGraphEvent;
 import org.onap.aai.spike.event.incoming.GizmoVertex;
 import org.onap.aai.spike.exception.SpikeException;
+import com.google.common.base.CaseFormat;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * This class is responsible for transforming raw graph entities (such as vertices and edges) into

@@ -18,7 +18,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.aai.spike.event;
+package org.onap.aai.spike.event.incoming;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

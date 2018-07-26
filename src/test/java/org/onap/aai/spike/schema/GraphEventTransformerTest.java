@@ -20,18 +20,20 @@
  */
 package org.onap.aai.spike.schema;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import javax.xml.bind.JAXBException;
+import java.net.URISyntaxException;
 import org.junit.Before;
 import org.junit.Test;
+import org.onap.aai.spike.event.envelope.EventEnvelopeParser;
 import org.onap.aai.spike.event.incoming.GizmoGraphEvent;
 import org.onap.aai.spike.exception.SpikeException;
+import org.onap.aai.spike.test.util.TestFileReader;
 
 
 /**
@@ -39,7 +41,6 @@ import org.onap.aai.spike.exception.SpikeException;
  * compliant representations of generic graph entities.
  */
 public class GraphEventTransformerTest {
-
     /**
      * Performs all setup steps expected to be performed prior to each test.
      */
@@ -117,5 +118,65 @@ public class GraphEventTransformerTest {
                 fail("Unexpected IOException: " + e.getMessage());
             }
         }
+    }
+    
+    @Test
+    public void TestValidateFieldType() throws SpikeException {
+        String value = null;
+        Class clazz;
+        Object obj;
+
+        clazz = Integer.class;
+        value = "5";
+        obj = GraphEventTransformer.validateFieldType(value, clazz);
+        assertEquals(new Integer(5), obj);
+
+        clazz = Long.class;
+        value = "5";
+        obj = GraphEventTransformer.validateFieldType(value, clazz);
+        assertEquals(new Long(5), obj);
+
+        clazz = Float.class;
+        value = "5.5";
+        obj = GraphEventTransformer.validateFieldType(value, clazz);
+        assertEquals(new Float(5.5), obj);
+
+        clazz = Double.class;
+        value = "5";
+        obj = GraphEventTransformer.validateFieldType(value, clazz);
+        assertEquals(new Double(5), obj);
+
+        clazz = Boolean.class;
+        value = "true";
+        obj = GraphEventTransformer.validateFieldType(value, clazz);
+        assertEquals(new Boolean(true), obj);
+
+        value = "NotValidBoolean";
+        try {
+            GraphEventTransformer.validateFieldType(value, clazz);
+        } catch (SpikeException e) {
+            assertEquals("Invalid property value: " + value, e.getMessage());
+        }
+
+        clazz = String.class;
+        value = "11";
+        try {
+            GraphEventTransformer.validateFieldType(value, clazz);
+        } catch (SpikeException e) {
+            assertEquals("Invalid property value: " + value, e.getMessage());
+        }
+    }
+
+    @Test
+    public void TestPopulateUUID() throws IOException, URISyntaxException, SpikeException {
+        String champNotification =
+                TestFileReader.getFileAsString("event/champ-update-notification-raw-with-relationship.json");
+
+        GizmoGraphEvent gizmoGraphEvent = new EventEnvelopeParser().parseEvent(champNotification);
+        GraphEventTransformer.populateUUID(gizmoGraphEvent);
+
+        assertEquals("b9c7d24a-64a5-4b89-a10a-a89ce58b1caa", gizmoGraphEvent.getRelationship().getId());
+        assertEquals("537494bd-1e8a-4198-9712-8cefa0f80457", gizmoGraphEvent.getRelationship().getSource().getId());
+        assertEquals("981c0494-c742-4d75-851c-8194bbbd8a96", gizmoGraphEvent.getRelationship().getTarget().getId());
     }
 }
