@@ -21,11 +21,14 @@
 package org.onap.aai.spike;
 
 import java.util.HashMap;
+import javax.annotation.PostConstruct;
 import org.eclipse.jetty.util.security.Password;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.core.env.Environment;
 
 /**
  * Spike service Spring Boot Application
@@ -33,7 +36,9 @@ import org.springframework.context.annotation.ImportResource;
 @SpringBootApplication
 @ImportResource({"file:${SERVICE_BEANS}/*.xml"})
 public class SpikeApplication extends SpringBootServletInitializer {
-
+    @Autowired
+    private Environment env;
+    
     public static void main(String[] args) {
         String keyStorePassword = System.getProperty("KEY_STORE_PASSWORD");
         if (keyStorePassword == null || keyStorePassword.isEmpty()) {
@@ -45,4 +50,21 @@ public class SpikeApplication extends SpringBootServletInitializer {
                 .run(args);
     }
 
+    /**
+     * Set required trust store system properties using values from application.properties
+     */
+    @PostConstruct
+    public void setSystemProperties() {
+        String trustStorePath = env.getProperty("server.ssl.key-store");
+        if (trustStorePath != null) {
+            String trustStorePassword = env.getProperty("server.ssl.key-store-password");
+
+            if (trustStorePassword != null) {
+                System.setProperty("javax.net.ssl.trustStore", trustStorePath);
+                System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
+            } else {
+                throw new IllegalArgumentException("Env property server.ssl.key-store-password not set");
+            }
+        }
+    }
 }
