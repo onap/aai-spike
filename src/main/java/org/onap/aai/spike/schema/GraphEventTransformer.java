@@ -23,6 +23,7 @@ package org.onap.aai.spike.schema;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.ws.rs.core.Response.Status;
 import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContext;
@@ -33,6 +34,7 @@ import org.onap.aai.spike.event.incoming.GizmoEdge;
 import org.onap.aai.spike.event.incoming.GizmoGraphEvent;
 import org.onap.aai.spike.event.incoming.GizmoVertex;
 import org.onap.aai.spike.exception.SpikeException;
+import org.onap.aai.spike.logging.SpikeMsgs;
 import com.google.common.base.CaseFormat;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -95,10 +97,13 @@ public class GraphEventTransformer {
         try {
 
             DynamicJAXBContext jaxbContext = OXMModelLoader.getContextForVersion(version);
-            String modelObjectClass = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL,
-                    CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, rawVertex.getType()));
-            final DynamicType modelObjectType = jaxbContext.getDynamicType(modelObjectClass);
+            final DynamicType modelObjectType = OXMModelLoader.getDynamicTypeForVersion(version, rawVertex.getType());
             final DynamicType reservedType = jaxbContext.getDynamicType("ReservedPropNames");
+
+            if (modelObjectType == null) {
+              logger.error(SpikeMsgs.LOADED_OXM_FILE, "Object of collection type not found: " + rawVertex.getType());
+              throw new SpikeException("Object of collection type not found: " + rawVertex.getType());
+            }
 
             Set<Map.Entry<String, JsonElement>> vertexEntriesSet =
                     rawVertex.getProperties().getAsJsonObject().entrySet();
@@ -216,14 +221,10 @@ public class GraphEventTransformer {
             JsonObject modelJsonElement = new JsonObject();
 
             for (String property : relationshipModel.keySet()) {
-
-                if (!edgeEntriesMap.containsKey(property)) {
-                    throw new SpikeException("Missing required field: " + property);
-                }
-
+              if (edgeEntriesMap.containsKey(property)) {
                 validateFieldType(edgeEntriesMap.get(property), relationshipModel.get(property));
                 modelJsonElement.add(property, edgeEntriesMap.get(property));
-
+              }
             }
 
             rawEdge.setProperties(modelJsonElement);

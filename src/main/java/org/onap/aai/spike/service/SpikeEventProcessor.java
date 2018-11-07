@@ -186,7 +186,7 @@ public class SpikeEventProcessor extends TimerTask {
 
                 // There is no point in continually committing the same offset value, so make sure
                 // that something has actually changed before we do anything...
-                if ((lastCommittedOffset == null) || (lastCommittedOffset != nextOffset)) {
+                if ((lastCommittedOffset == null) || (!lastCommittedOffset.equals(nextOffset))) {
 
                     if (logger.isDebugEnabled()) {
                         logger.debug(
