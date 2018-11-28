@@ -25,12 +25,16 @@ import static org.junit.Assert.assertNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.spike.OXMModelLoaderSetup;
 import org.onap.aai.spike.event.envelope.EventEnvelopeParser;
 import org.onap.aai.spike.event.outgoing.SpikeGraphEvent;
 import org.onap.aai.spike.exception.SpikeException;
 import org.onap.aai.spike.test.util.TestFileReader;
 
-public class GizmoGraphEventTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class GizmoGraphEventTest extends OXMModelLoaderSetup {
 
     @Test
     public void TestToSpikeGraphEvent() throws SpikeException, IOException, URISyntaxException {

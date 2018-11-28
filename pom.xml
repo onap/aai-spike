@@ -36,7 +36,7 @@
 
     <properties>
         <docker.location>${basedir}/target</docker.location>
-        <aaiCommonVersion>1.2.4</aaiCommonVersion>
+        <aaiCommonVersion>1.4.0-SNAPSHOT</aaiCommonVersion>
         <event.client.version>1.4.0-SNAPSHOT</event.client.version>
     </properties>
 
@@ -73,6 +73,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -303,16 +309,7 @@
                                     <artifactId>aai-schema</artifactId>
                                     <version>${aaiCommonVersion}</version>
                                     <type>jar</type>
-                                    <includes>oxm/</includes>
-                                    <outputDirectory>${project.build.directory}/bundleconfig-local/etc</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.onap.aai.aai-common</groupId>
-                                    <artifactId>aai-core</artifactId>
-                                    <version>${aaiCommonVersion}</version>
-                                    <type>jar</type>
-                                    <includes>dbedgerules/</includes>
-                                    <excludes>**/*.ftlh</excludes>
+                                    <includes>onap/**/</includes>
                                     <outputDirectory>${project.build.directory}/bundleconfig-local/etc</outputDirectory>
                                 </artifactItem>
                             </artifactItems>

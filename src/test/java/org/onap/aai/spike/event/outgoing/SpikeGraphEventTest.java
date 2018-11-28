@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
 public class SpikeGraphEventTest {
+
     @Test
     public void testGetObjectKey() {
         String objectKey;

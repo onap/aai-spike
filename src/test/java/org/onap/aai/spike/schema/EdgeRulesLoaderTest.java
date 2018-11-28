@@ -24,11 +24,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.spike.OXMModelLoaderSetup;
 import org.onap.aai.spike.exception.SpikeException;
 
-public class EdgeRulesLoaderTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class EdgeRulesLoaderTest extends OXMModelLoaderSetup {
 
     @Test
     public void loadModels() throws Exception {

@@ -11,7 +11,7 @@
     "timestamp": 1528714625713,
     "vertex": {
       "key": "f62b8fb4-506b-48a8-8578-56bb95ad64ae",
-      "schema-version": "V13",
+      "schema-version": "v13",
       "type": "pserver",
       "properties": {
         "hostname": "ma-host2-20180611-01",

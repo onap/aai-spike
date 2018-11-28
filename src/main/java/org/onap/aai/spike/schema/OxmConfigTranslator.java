@@ -32,15 +32,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.onap.aai.setup.ConfigTranslator;
 import org.onap.aai.setup.SchemaLocationsBean;
-import org.onap.aai.setup.Version;
+import org.onap.aai.setup.SchemaVersion;
+import org.onap.aai.setup.SchemaVersions;
 
 public class OxmConfigTranslator extends ConfigTranslator {
-    public OxmConfigTranslator(SchemaLocationsBean bean) {
-        super(bean);
+    public OxmConfigTranslator(SchemaLocationsBean bean, SchemaVersions schemaVersions) {
+        super(bean, schemaVersions);
     }
 
     @Override
-    public Map<Version, List<String>> getNodeFiles() {
+    public Map<SchemaVersion, List<String>> getNodeFiles() {
         String nodeDirectory = bean.getNodeDirectory();
         if (nodeDirectory == null) {
             throw new ServiceConfigurationError(
@@ -54,7 +55,7 @@ public class OxmConfigTranslator extends ConfigTranslator {
     }
 
     @Override
-    public Map<Version, List<String>> getEdgeFiles() {
+    public Map<SchemaVersion, List<String>> getEdgeFiles() {
         String edgeDirectory = bean.getEdgeDirectory();
         if (edgeDirectory == null) {
             throw new ServiceConfigurationError(
@@ -79,7 +80,7 @@ public class OxmConfigTranslator extends ConfigTranslator {
      * @return a new Map object (may be empty)
      * @throws IOException if there is a problem reading the specified directory path
      */
-    private Map<Version, List<String>> getVersionMap(Path folderPath, String globPattern) throws IOException {
+    private Map<SchemaVersion, List<String>> getVersionMap(Path folderPath, String globPattern) throws IOException {
         final PathMatcher filter = folderPath.getFileSystem().getPathMatcher("glob:**/" + globPattern);
         try (final Stream<Path> stream = Files.list(folderPath)) {
             return stream.filter(filter::matches).map(Path::toString).filter(p -> getVersionFromPath(p) != null)
@@ -87,10 +88,12 @@ public class OxmConfigTranslator extends ConfigTranslator {
         }
     }
 
-    private Version getVersionFromPath(String pathName) {
+    private SchemaVersion getVersionFromPath(String pathName) {
         String version = "V" + pathName.replaceAll("^.*\\/", "").replaceAll("\\D+", "");
         try {
-            return Version.valueOf(version);
+            SchemaVersion schemaVersion = schemaVersions.getVersions().stream()
+                    .filter(s -> s.toString().equalsIgnoreCase(version)).findAny().orElse(null);
+            return schemaVersion;
         } catch (IllegalArgumentException e) {
             return null;
         }

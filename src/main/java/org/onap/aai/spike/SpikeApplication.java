@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.env.Environment;
 
@@ -34,20 +35,23 @@ import org.springframework.core.env.Environment;
  * Spike service Spring Boot Application
  */
 @SpringBootApplication
+@Import({SchemaIngestConfiguration.class})
 @ImportResource({"file:${SERVICE_BEANS}/*.xml"})
 public class SpikeApplication extends SpringBootServletInitializer {
     @Autowired
     private Environment env;
-    
+
     public static void main(String[] args) {
         String keyStorePassword = System.getProperty("KEY_STORE_PASSWORD");
         if (keyStorePassword == null || keyStorePassword.isEmpty()) {
             throw new IllegalArgumentException("System Property KEY_STORE_PASSWORD not set");
         }
+
         HashMap<String, Object> props = new HashMap<>();
         props.put("server.ssl.key-store-password", Password.deobfuscate(keyStorePassword));
-        new SpikeApplication().configure(new SpringApplicationBuilder(SpikeApplication.class).properties(props))
-                .run(args);
+
+        new SpikeApplication().configure(new SpringApplicationBuilder(SchemaIngestConfiguration.class)
+                .child(SpikeApplication.class).properties(props)).run(args);
     }
 
     /**
@@ -67,4 +71,5 @@ public class SpikeApplication extends SpringBootServletInitializer {
             }
         }
     }
+
 }

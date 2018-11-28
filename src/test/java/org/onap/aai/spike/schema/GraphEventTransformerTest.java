@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.spike.OXMModelLoaderSetup;
 import org.onap.aai.spike.event.envelope.EventEnvelopeParser;
 import org.onap.aai.spike.event.incoming.GizmoGraphEvent;
 import org.onap.aai.spike.exception.SpikeException;
@@ -40,20 +43,17 @@ import org.onap.aai.spike.test.util.TestFileReader;
  * This set of tests validates the ability of the {@link GraphEventTransformer} to produce OXM model
  * compliant representations of generic graph entities.
  */
-public class GraphEventTransformerTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class GraphEventTransformerTest extends OXMModelLoaderSetup {
+
     /**
      * Performs all setup steps expected to be performed prior to each test.
      */
     @Before
     public void setup() throws Exception {
-        // Load the OXM model definitions.
         OXMModelLoader.loadModels();
-
-        // Load the relationship definitions.
-        System.setProperty("CONFIG_HOME", "src/test/resources/");
         EdgeRulesLoader.loadModels();
     }
-
 
     /**
      * Validates that, given a raw vertex from the graph abstraction layer, we can transform it into a
@@ -119,7 +119,7 @@ public class GraphEventTransformerTest {
             }
         }
     }
-    
+
     @Test
     public void TestValidateFieldType() throws SpikeException {
         String value = null;

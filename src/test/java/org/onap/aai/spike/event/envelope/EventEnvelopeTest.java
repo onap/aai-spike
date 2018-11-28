@@ -23,6 +23,9 @@ package org.onap.aai.spike.event.envelope;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.spike.OXMModelLoaderSetup;
 import org.onap.aai.spike.event.incoming.GizmoGraphEvent;
 import org.onap.aai.spike.event.outgoing.SpikeEventExclusionStrategy;
 import org.onap.aai.spike.event.outgoing.SpikeGraphEvent;
@@ -32,7 +35,8 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
 
-public class EventEnvelopeTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class EventEnvelopeTest extends OXMModelLoaderSetup {
 
     private static final Gson gson =
             new GsonBuilder().setExclusionStrategies(new SpikeEventExclusionStrategy()).setPrettyPrinting().create();

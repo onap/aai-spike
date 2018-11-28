@@ -21,12 +21,16 @@
 package org.onap.aai.spike.event.envelope;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.spike.OXMModelLoaderSetup;
 import org.onap.aai.spike.event.incoming.GizmoGraphEvent;
 import org.onap.aai.spike.test.util.TestFileReader;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-public class EventEnvelopeParserTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class EventEnvelopeParserTest extends OXMModelLoaderSetup {
 
     @Test
     public void testParseEvent() throws Exception {

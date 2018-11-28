@@ -20,6 +20,7 @@
  */
 package org.onap.aai.spike.schema;
 
+import com.google.common.collect.Multimap;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,29 +32,33 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import com.google.common.collect.Multimap;
 import org.apache.commons.io.IOUtils;
 import org.onap.aai.cl.eelf.LoggerFactory;
 import org.onap.aai.edges.EdgeIngestor;
 import org.onap.aai.edges.EdgeRule;
 import org.onap.aai.edges.exceptions.EdgeRuleNotFoundException;
 import org.onap.aai.setup.ConfigTranslator;
-import org.onap.aai.setup.SchemaLocationsBean;
-import org.onap.aai.setup.Version;
+import org.onap.aai.setup.SchemaVersion;
 import org.onap.aai.spike.exception.SpikeException;
 import org.onap.aai.spike.logging.SpikeMsgs;
-import org.onap.aai.spike.util.SchemaIngestPropertiesReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class EdgeRulesLoader {
+
+    private static ConfigTranslator configTranslator;
+    private static EdgeIngestor edgeIngestor;
+
+    private static EdgePropsConfiguration edgePropsConfiguration;
 
     private static Map<String, RelationshipSchema> versionContextMap = new ConcurrentHashMap<>();
 
-    static final Pattern versionPattern = Pattern.compile("V(\\d*)");
+    static final Pattern versionPattern = Pattern.compile("(?i)v(\\d*)");
     static final String propsPrefix = "edge_properties_";
     static final String propsSuffix = ".json";
     final static Pattern propsFilePattern = Pattern.compile(propsPrefix + "(.*)" + propsSuffix);
-    final static Pattern propsVersionPattern = Pattern.compile("v\\d*");
+    final static Pattern propsVersionPattern = Pattern.compile("(?i)v\\d*");
 
     private static org.onap.aai.cl.api.Logger logger =
             LoggerFactory.getInstance().getLogger(EdgeRulesLoader.class.getName());
@@ -61,17 +66,28 @@ public class EdgeRulesLoader {
     private EdgeRulesLoader() {}
 
     /**
+     * This constructor presents an awkward marrying of Spring bean creation and static method use. This
+     * is technical debt that will need fixing.
+     *
+     * @param configTranslator contains schema versions configuration
+     * @param edgeIngestor provides edge rules
+     * @param edgePropsConfiguration edge property validation configuration
+     */
+    @Autowired
+    public EdgeRulesLoader(ConfigTranslator configTranslator, EdgeIngestor edgeIngestor,
+            EdgePropsConfiguration edgePropsConfiguration) {
+        EdgeRulesLoader.configTranslator = configTranslator;
+        EdgeRulesLoader.edgeIngestor = edgeIngestor;
+        EdgeRulesLoader.edgePropsConfiguration = edgePropsConfiguration;
+    }
+
+    /**
      * Finds all DB Edge Rules and Edge Properties files for all OXM models.
      *
      * @throws SpikeException
      */
     public static synchronized void loadModels() throws SpikeException {
-        SchemaIngestPropertiesReader SchemaIngestPropertiesReader = new SchemaIngestPropertiesReader();
-        SchemaLocationsBean schemaLocationsBean = new SchemaLocationsBean();
-        schemaLocationsBean.setEdgeDirectory(SchemaIngestPropertiesReader.getEdgeDir());
-        ConfigTranslator configTranslator = new OxmConfigTranslator(schemaLocationsBean);
-        EdgeIngestor edgeIngestor = new EdgeIngestor(configTranslator);
-        Map<String, File> propFiles = edgePropertyFiles(SchemaIngestPropertiesReader);
+        Map<String, File> propFiles = edgePropertyFiles(edgePropsConfiguration);
 
         if (logger.isDebugEnabled()) {
             logger.debug("Loading DB Edge Rules");
@@ -79,7 +95,9 @@ public class EdgeRulesLoader {
 
         for (String version : OXMModelLoader.getLoadedOXMVersions()) {
             try {
-                loadModel(Version.valueOf(version), edgeIngestor, propFiles);
+                SchemaVersion schemaVersion = configTranslator.getSchemaVersions().getVersions().stream()
+                        .filter(s -> s.toString().equalsIgnoreCase(version)).findAny().orElse(null);
+                loadModel(schemaVersion, edgeIngestor, propFiles);
             } catch (IOException | EdgeRuleNotFoundException e) {
                 throw new SpikeException(e.getMessage(), e);
             }
@@ -93,20 +111,17 @@ public class EdgeRulesLoader {
      */
 
     public static synchronized void loadModels(String v) throws SpikeException {
-        SchemaIngestPropertiesReader SchemaIngestPropertiesReader = new SchemaIngestPropertiesReader();
-        SchemaLocationsBean schemaLocationsBean = new SchemaLocationsBean();
-        schemaLocationsBean.setEdgeDirectory(SchemaIngestPropertiesReader.getEdgeDir());
-        ConfigTranslator configTranslator = new OxmConfigTranslator(schemaLocationsBean);
-        EdgeIngestor edgeIngestor = new EdgeIngestor(configTranslator);
-        String version = v.toUpperCase();
-        Map<String, File> propFiles = edgePropertyFiles(SchemaIngestPropertiesReader);
+        Map<String, File> propFiles = edgePropertyFiles(edgePropsConfiguration);
 
         if (logger.isDebugEnabled()) {
             logger.debug("Loading DB Edge Rules ");
         }
 
         try {
-            loadModel(Version.valueOf(version), edgeIngestor, propFiles);
+            SchemaVersion schemaVersion = configTranslator.getSchemaVersions().getVersions().stream()
+                    .filter(s -> s.toString().equalsIgnoreCase(v)).findAny().orElse(null);
+
+            loadModel(schemaVersion, edgeIngestor, propFiles);
         } catch (IOException | EdgeRuleNotFoundException e) {
             throw new SpikeException(e.getMessage());
         }
@@ -172,7 +187,7 @@ public class EdgeRulesLoader {
         String latestVersionStr = null;
         for (String versionKey : versionContextMap.keySet()) {
 
-            Matcher matcher = versionPattern.matcher(versionKey.toUpperCase());
+            Matcher matcher = versionPattern.matcher(versionKey);
             if (matcher.find()) {
 
                 int currentVersion = Integer.parseInt(matcher.group(1));
@@ -191,13 +206,12 @@ public class EdgeRulesLoader {
      * Reset the loaded DB Edge Rule schemas
      *
      */
-
     public static void resetSchemaVersionContext() {
         versionContextMap = new ConcurrentHashMap<>();
     }
 
-    private static synchronized void loadModel(Version version, EdgeIngestor edgeIngestor, Map<String, File> props)
-            throws IOException, SpikeException, EdgeRuleNotFoundException {
+    private static synchronized void loadModel(SchemaVersion version, EdgeIngestor edgeIngestor,
+            Map<String, File> props) throws IOException, SpikeException, EdgeRuleNotFoundException {
 
         Multimap<String, EdgeRule> edges = edgeIngestor.getAllRules(version);
         String edgeProps;
@@ -213,11 +227,13 @@ public class EdgeRulesLoader {
         }
     }
 
-    private static Map<String, File> edgePropertyFiles(SchemaIngestPropertiesReader dir) throws SpikeException {
+    private static Map<String, File> edgePropertyFiles(EdgePropsConfiguration edgePropsConfiguration)
+            throws SpikeException {
         Map<String, File> propsFiles = Arrays
-                .stream(new File(dir.getEdgePropsDir())
+                .stream(new File(edgePropsConfiguration.getEdgePropsDir())
                         .listFiles((d, name) -> propsFilePattern.matcher(name).matches()))
                 .collect(Collectors.toMap(new Function<File, String>() {
+                    @Override
                     public String apply(File f) {
                         Matcher m1 = propsVersionPattern.matcher(f.getName());
                         m1.find();

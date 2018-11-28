@@ -22,15 +22,19 @@ package org.onap.aai.spike.schema;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import org.eclipse.persistence.dynamic.DynamicType;
 import org.eclipse.persistence.internal.helper.DatabaseField;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContext;
 import org.eclipse.persistence.mappings.DatabaseMapping;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.aai.spike.OXMModelLoaderSetup;
 import org.onap.aai.spike.exception.SpikeException;
 
-public class OxmModelLoaderTest {
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class OxmModelLoaderTest extends OXMModelLoaderSetup {
+
     @Test
     public void testLoadingMultipleOxmFiles() throws SpikeException {
         OXMModelLoader.loadModels();
