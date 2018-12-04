@@ -33,7 +33,7 @@ public class OffsetManagerTest {
     @Test
     public void testOffsetAdvancement() throws Exception {
 
-        final Long offsetPeriod = 50L; // ms
+        final Long offsetPeriod = 500L; // ms
 
         // Create an instance of the offset manager.
         OffsetManager offsetManager = new OffsetManager(10, offsetPeriod);

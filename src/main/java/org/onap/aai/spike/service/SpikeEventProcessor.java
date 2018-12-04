@@ -246,6 +246,8 @@ public class SpikeEventProcessor extends TimerTask {
                                     || eventQueue.size() > eventQueueCapacity)) {
                         event = eventQueue.take();
                     } else {
+                        // Small pause so that we aren't burning CPU
+                        Thread.sleep(200);
                         continue;
                     }
 
