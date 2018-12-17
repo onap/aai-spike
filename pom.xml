@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-    ﻿============LICENSE_START=======================================================
+    ============LICENSE_START=======================================================
     org.onap.aai
     ================================================================================
     Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -36,8 +36,9 @@
 
     <properties>
         <docker.location>${basedir}/target</docker.location>
-        <aaiCommonVersion>1.4.0-SNAPSHOT</aaiCommonVersion>
         <event.client.version>1.4.0-SNAPSHOT</event.client.version>
+        <version.aai-schema>1.4.1-SNAPSHOT</version.aai-schema>
+        <version.aai-schema-ingest>1.4.1-SNAPSHOT</version.aai-schema-ingest>
     </properties>
 
     <dependencyManagement>
@@ -46,7 +47,7 @@
                 <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.1.0.RELEASE</version>
+                <version>1.5.17.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -81,9 +82,56 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- MODEL -->
+        <dependency>
+            <groupId>org.onap.aai.aai-common</groupId>
+            <artifactId>aai-schema</artifactId>
+            <version>${version.aai-schema}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.aai.aai-common</groupId>
+            <artifactId>aai-schema-ingest</artifactId>
+            <version>${version.aai-schema-ingest}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.powermock</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- EVENT CLIENT -->
+        <dependency>
+            <groupId>org.onap.aai.event-client</groupId>
+            <artifactId>event-client-api</artifactId>
+            <version>${event.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.aai.event-client</groupId>
+            <artifactId>event-client-dmaap</artifactId>
+            <version>${event.client.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.onap.aai.event-client</groupId>
+            <artifactId>event-client-kafka</artifactId>
+            <version>${event.client.version}</version>
+        </dependency>
+        <dependency>
+           <groupId>org.onap.aai.event-client</groupId>
+           <artifactId>event-client-rabbitmq</artifactId>
+           <version>${event.client.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
         </dependency>
 
         <dependency>
@@ -96,12 +144,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onap.aai.aai-common</groupId>
-            <artifactId>aai-schema-ingest</artifactId>
-            <version>${aaiCommonVersion}</version>
         </dependency>
 
         <!-- Common logging framework -->
@@ -123,21 +165,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.onap.aai.aai-common</groupId>
-            <artifactId>aai-core</artifactId>
-            <version>${aaiCommonVersion}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-
         </dependency>
 
         <dependency>
@@ -163,36 +192,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.onap.aai.aai-common</groupId>
-            <artifactId>aai-schema</artifactId>
-            <version>${aaiCommonVersion}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onap.aai.event-client</groupId>
-            <artifactId>event-client-api</artifactId>
-            <version>${event.client.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onap.aai.event-client</groupId>
-            <artifactId>event-client-dmaap</artifactId>
-            <version>${event.client.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.onap.aai.event-client</groupId>
-            <artifactId>event-client-kafka</artifactId>
-            <version>${event.client.version}</version> 
-        </dependency>
-
-        <dependency>
-           <groupId>org.onap.aai.event-client</groupId>
-           <artifactId>event-client-rabbitmq</artifactId>
-           <version>${event.client.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.3</version>
@@ -215,6 +214,13 @@
             <artifactId>jsonassert</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.15.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 
@@ -224,7 +230,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.0.3.RELEASE</version>
+                <version>1.5.17.RELEASE</version>
                 <executions>
                     <execution>
                         <goals>
@@ -307,7 +313,7 @@
                                 <artifactItem>
                                     <groupId>org.onap.aai.aai-common</groupId>
                                     <artifactId>aai-schema</artifactId>
-                                    <version>${aaiCommonVersion}</version>
+                                    <version>${version.aai-schema}</version>
                                     <type>jar</type>
                                     <includes>onap/**/</includes>
                                     <outputDirectory>${project.build.directory}/bundleconfig-local/etc</outputDirectory>

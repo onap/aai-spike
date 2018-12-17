@@ -37,8 +37,8 @@ import org.onap.aai.cl.eelf.LoggerFactory;
 import org.onap.aai.edges.EdgeIngestor;
 import org.onap.aai.edges.EdgeRule;
 import org.onap.aai.edges.exceptions.EdgeRuleNotFoundException;
-import org.onap.aai.setup.ConfigTranslator;
 import org.onap.aai.setup.SchemaVersion;
+import org.onap.aai.setup.Translator;
 import org.onap.aai.spike.exception.SpikeException;
 import org.onap.aai.spike.logging.SpikeMsgs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EdgeRulesLoader {
 
-    private static ConfigTranslator configTranslator;
+    private static Translator translator;
     private static EdgeIngestor edgeIngestor;
 
     private static EdgePropsConfiguration edgePropsConfiguration;
@@ -69,14 +69,14 @@ public class EdgeRulesLoader {
      * This constructor presents an awkward marrying of Spring bean creation and static method use. This
      * is technical debt that will need fixing.
      *
-     * @param configTranslator contains schema versions configuration
+     * @param translator contains schema versions configuration
      * @param edgeIngestor provides edge rules
      * @param edgePropsConfiguration edge property validation configuration
      */
     @Autowired
-    public EdgeRulesLoader(ConfigTranslator configTranslator, EdgeIngestor edgeIngestor,
+    public EdgeRulesLoader(Translator translator, EdgeIngestor edgeIngestor,
             EdgePropsConfiguration edgePropsConfiguration) {
-        EdgeRulesLoader.configTranslator = configTranslator;
+        EdgeRulesLoader.translator = translator;
         EdgeRulesLoader.edgeIngestor = edgeIngestor;
         EdgeRulesLoader.edgePropsConfiguration = edgePropsConfiguration;
     }
@@ -95,7 +95,7 @@ public class EdgeRulesLoader {
 
         for (String version : OXMModelLoader.getLoadedOXMVersions()) {
             try {
-                SchemaVersion schemaVersion = configTranslator.getSchemaVersions().getVersions().stream()
+                SchemaVersion schemaVersion = translator.getSchemaVersions().getVersions().stream()
                         .filter(s -> s.toString().equalsIgnoreCase(version)).findAny().orElse(null);
                 loadModel(schemaVersion, edgeIngestor, propFiles);
             } catch (IOException | EdgeRuleNotFoundException e) {
@@ -118,7 +118,7 @@ public class EdgeRulesLoader {
         }
 
         try {
-            SchemaVersion schemaVersion = configTranslator.getSchemaVersions().getVersions().stream()
+            SchemaVersion schemaVersion = translator.getSchemaVersions().getVersions().stream()
                     .filter(s -> s.toString().equalsIgnoreCase(v)).findAny().orElse(null);
 
             loadModel(schemaVersion, edgeIngestor, propFiles);

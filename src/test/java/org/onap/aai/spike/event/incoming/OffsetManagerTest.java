@@ -1,5 +1,5 @@
 /**
- * ﻿============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * org.onap.aai
  * ================================================================================
  * Copyright © 2017-2018 AT&T Intellectual Property. All rights reserved.
@@ -33,10 +33,10 @@ public class OffsetManagerTest {
     @Test
     public void testOffsetAdvancement() throws Exception {
 
-        final Long offsetPeriod = 500L; // ms
+        final Long offsetPeriod = 100L; // ms
 
         // Create an instance of the offset manager.
-        OffsetManager offsetManager = new OffsetManager(10, offsetPeriod);
+        OffsetManager offsetManager = new OffsetManager(5, offsetPeriod);
 
         // Now, cache some events as if we had consumed them and they
         // are in flight.

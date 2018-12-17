@@ -34,8 +34,8 @@ import org.eclipse.persistence.internal.oxm.mappings.Descriptor;
 import org.eclipse.persistence.jaxb.dynamic.DynamicJAXBContext;
 import org.onap.aai.cl.eelf.LoggerFactory;
 import org.onap.aai.nodes.NodeIngestor;
-import org.onap.aai.setup.ConfigTranslator;
 import org.onap.aai.setup.SchemaVersion;
+import org.onap.aai.setup.Translator;
 import org.onap.aai.spike.exception.SpikeException;
 import org.onap.aai.spike.logging.SpikeMsgs;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OXMModelLoader {
 
-    private static ConfigTranslator configTranslator;
+    private static Translator translator;
     private static NodeIngestor nodeIngestor;
 
     private static Map<String, DynamicJAXBContext> versionContextMap = new ConcurrentHashMap<>();
@@ -65,12 +65,12 @@ public class OXMModelLoader {
      * This constructor presents an awkward marrying of Spring bean creation and static method use. This
      * is technical debt that will need fixing.
      *
-     * @param configTranslator contains schema versions configuration
+     * @param translator contains schema versions configuration
      * @param nodeIngestor provides DynamicJAXBContext for the OXM version
      */
     @Autowired
-    public OXMModelLoader(ConfigTranslator configTranslator, NodeIngestor nodeIngestor) {
-        OXMModelLoader.configTranslator = configTranslator;
+    public OXMModelLoader(Translator translator, NodeIngestor nodeIngestor) {
+        OXMModelLoader.translator = translator;
         OXMModelLoader.nodeIngestor = nodeIngestor;
     }
 
@@ -86,7 +86,7 @@ public class OXMModelLoader {
             logger.debug("Loading OXM Models");
         }
 
-        for (SchemaVersion oxmVersion : configTranslator.getSchemaVersions().getVersions()) {
+        for (SchemaVersion oxmVersion : translator.getSchemaVersions().getVersions()) {
             DynamicJAXBContext jaxbContext = nodeIngestor.getContextForVersion(oxmVersion);
             if (jaxbContext != null) {
                 loadModel(oxmVersion.toString(), jaxbContext);

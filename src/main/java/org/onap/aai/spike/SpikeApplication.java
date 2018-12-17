@@ -23,19 +23,28 @@ package org.onap.aai.spike;
 import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import org.eclipse.jetty.util.security.Password;
+import org.onap.aai.setup.AAIConfigTranslator;
+import org.onap.aai.setup.ConfigTranslator;
+import org.onap.aai.setup.SchemaLocationsBean;
+import org.onap.aai.setup.SchemaVersions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 /**
  * Spike service Spring Boot Application
  */
 @SpringBootApplication
-@Import({SchemaIngestConfiguration.class})
+@ComponentScan(basePackages = {"org.onap.aai.config", "org.onap.aai.setup", "org.onap.aai.spike"})
+@PropertySource(value = "file:${schema.ingest.file}", ignoreResourceNotFound = true)
+@PropertySource(value = "file:${edgeprops.ingest.file}", ignoreResourceNotFound = true)
 @ImportResource({"file:${SERVICE_BEANS}/*.xml"})
 public class SpikeApplication extends SpringBootServletInitializer {
     @Autowired
@@ -49,9 +58,11 @@ public class SpikeApplication extends SpringBootServletInitializer {
 
         HashMap<String, Object> props = new HashMap<>();
         props.put("server.ssl.key-store-password", Password.deobfuscate(keyStorePassword));
+        props.put("schema.service.ssl.key-store-password", Password.deobfuscate(keyStorePassword));
+        props.put("schema.service.ssl.trust-store-password", Password.deobfuscate(keyStorePassword));
 
-        new SpikeApplication().configure(new SpringApplicationBuilder(SchemaIngestConfiguration.class)
-                .child(SpikeApplication.class).properties(props)).run(args);
+        new SpikeApplication().configure(new SpringApplicationBuilder(SpikeApplication.class).properties(props))
+                .run(args);
     }
 
     /**
@@ -70,6 +81,12 @@ public class SpikeApplication extends SpringBootServletInitializer {
                 throw new IllegalArgumentException("Env property server.ssl.key-store-password not set");
             }
         }
+    }
+
+    @Bean
+    @ConditionalOnExpression("'${schema.translator.list}'.contains('config')")
+    public ConfigTranslator configTranslator(SchemaLocationsBean schemaLocationsBean, SchemaVersions schemaVersions) {
+        return new AAIConfigTranslator(schemaLocationsBean, schemaVersions);
     }
 
 }
