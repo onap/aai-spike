@@ -1,5 +1,4 @@
 /**
- * ﻿============LICENSE_START=======================================================
  * Gizmo
  * ================================================================================
  * Copyright © 2017 AT&T Intellectual Property.
@@ -33,19 +32,23 @@ import java.util.stream.Collectors;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.onap.aai.cl.eelf.LoggerFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.onap.aai.edges.EdgeRule;
 import org.onap.aai.spike.exception.SpikeException;
+import org.onap.aai.spike.logging.SpikeMsgs;
 
 
 public class RelationshipSchema {
-    private static final Gson gson = new GsonBuilder().create();
+	
 
     public static final String SCHEMA_SOURCE_NODE_TYPE = "from";
     public static final String SCHEMA_TARGET_NODE_TYPE = "to";
     public static final String SCHEMA_RELATIONSHIP_TYPE = "label";
     public static final String SCHEMA_RULES_ARRAY = "rules";
 
+    private static org.onap.aai.cl.api.Logger logger =
+            LoggerFactory.getInstance().getLogger(RelationshipSchema.class.getName());
 
     private Map<String, Map<String, Class<?>>> relations = new HashMap<>();
     /**
@@ -61,7 +64,7 @@ public class RelationshipSchema {
                     try {
                         return resolveClass(p.getValue());
                     } catch (SpikeException | ClassNotFoundException e) {
-                        e.printStackTrace();
+                    	logger.error(SpikeMsgs.OXM_LOAD_ERROR, "Error in RelationshipSchema: " + e);
                     }
                     return null;
                 }));
@@ -85,7 +88,7 @@ public class RelationshipSchema {
                     try {
                         return resolveClass(p.getValue());
                     } catch (SpikeException | ClassNotFoundException e) {
-                        e.printStackTrace();
+                    	logger.error(SpikeMsgs.OXM_LOAD_ERROR, "Error in RelationshipSchema: " + e);
                     }
                     return null;
                 }));
