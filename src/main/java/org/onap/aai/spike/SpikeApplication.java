@@ -61,6 +61,10 @@ public class SpikeApplication extends SpringBootServletInitializer {
         props.put("schema.service.ssl.key-store-password", Password.deobfuscate(keyStorePassword));
         props.put("schema.service.ssl.trust-store-password", Password.deobfuscate(keyStorePassword));
 
+        String requireClientAuth = System.getenv("REQUIRE_CLIENT_AUTH");
+        props.put("server.ssl.client-auth",
+                Boolean.FALSE.toString().equalsIgnoreCase(requireClientAuth) ? "want" : "need");
+
         new SpikeApplication().configure(new SpringApplicationBuilder(SpikeApplication.class).properties(props))
                 .run(args);
     }
