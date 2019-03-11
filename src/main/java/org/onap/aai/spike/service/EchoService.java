@@ -76,8 +76,7 @@ public class EchoService {
         auditLogger.info(SpikeMsgs.PROCESS_REST_REQUEST,
                 new LogFields().setField(LogLine.DefinedFields.RESPONSE_CODE, Status.OK.toString())
                         .setField(LogLine.DefinedFields.RESPONSE_DESCRIPTION, Status.OK.toString()),
-                (req != null) ? req.getMethod() : "Unknown", (req != null) ? req.getRequestURL().toString() : "Unknown",
-                (req != null) ? req.getRemoteHost() : "Unknown", Status.OK.toString());
+                req.getMethod(), req.getRequestURL().toString(), req.getRemoteHost(), Status.OK.toString());
         MDC.clear();
 
         return new ResponseEntity<>("Alive", HttpStatus.OK);
