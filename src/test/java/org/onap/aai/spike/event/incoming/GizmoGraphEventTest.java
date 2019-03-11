@@ -24,7 +24,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.spike.OXMModelLoaderSetup;
@@ -36,6 +39,11 @@ import org.onap.aai.spike.test.util.TestFileReader;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class GizmoGraphEventTest extends OXMModelLoaderSetup {
 
+	private static final String SPIKE_EXCEPTION_MESSAGE = "Unable to parse JSON string: Empty or null JSON string.";	
+	
+	@Rule
+	public ExpectedException exceptionRule = ExpectedException.none();
+	
     @Test
     public void TestToSpikeGraphEvent() throws SpikeException, IOException, URISyntaxException {
         String champNotification =
@@ -63,6 +71,8 @@ public class GizmoGraphEventTest extends OXMModelLoaderSetup {
 
         gizmoGraphEvent = new GizmoGraphEvent();
         GizmoEdge relationship = new GizmoEdge();
+        relationship.setSource(vertex);
+        relationship.setTarget(vertex);
         relationship.setId("909d");
 
         gizmoGraphEvent.setRelationship(relationship);
@@ -98,5 +108,33 @@ public class GizmoGraphEventTest extends OXMModelLoaderSetup {
         gizmoGraphEvent = new GizmoGraphEvent();
         objectType = gizmoGraphEvent.getObjectType();
         assertNull(objectType);
+    }
+    
+    @Test
+    public void TestGizmoEdgeExceptionEmpty() throws SpikeException {
+    	exceptionRule.expect(SpikeException.class);
+    	exceptionRule.expectMessage(SPIKE_EXCEPTION_MESSAGE);
+    	GizmoEdge.fromJson("");
+    }
+    
+    @Test
+    public void TestGizmoEdgeExceptionNull() throws SpikeException {
+    	exceptionRule.expect(SpikeException.class);
+    	exceptionRule.expectMessage(SPIKE_EXCEPTION_MESSAGE);
+    	GizmoEdge.fromJson(null);
+    }
+    
+    @Test
+    public void TestGizmoVertexExceptionEmpty() throws SpikeException {
+    	exceptionRule.expect(SpikeException.class);
+    	exceptionRule.expectMessage(SPIKE_EXCEPTION_MESSAGE);
+    	GizmoVertex.fromJson("");
+    }
+    
+    @Test
+    public void TestGizmoVertexExceptionNull() throws SpikeException {
+    	exceptionRule.expect(SpikeException.class);
+    	exceptionRule.expectMessage(SPIKE_EXCEPTION_MESSAGE);
+    	GizmoVertex.fromJson(null);
     }
 }
