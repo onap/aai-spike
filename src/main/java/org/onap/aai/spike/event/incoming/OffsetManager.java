@@ -189,7 +189,7 @@ public class OffsetManager {
      * 
      * @return - The next 'safe' offset.
      */
-    public long getNextOffsetToCommit() {
+    public Long getNextOffsetToCommit() {
         return nextOffsetToCommit;
     }
 
