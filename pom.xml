@@ -37,8 +37,8 @@
     <properties>
         <docker.location>${basedir}/target</docker.location>
         <event.client.version>1.4.0-SNAPSHOT</event.client.version>
-        <version.aai-schema>1.4.1-SNAPSHOT</version.aai-schema>
-        <version.aai-schema-ingest>1.4.1-SNAPSHOT</version.aai-schema-ingest>
+        <version.aai-schema>1.0.0</version.aai-schema>
+        <version.aai-schema-ingest>1.4.1</version.aai-schema-ingest>
     </properties>
 
     <dependencyManagement>
@@ -84,7 +84,7 @@
 
         <!-- MODEL -->
         <dependency>
-            <groupId>org.onap.aai.aai-common</groupId>
+            <groupId>org.onap.aai.schema-service</groupId>
             <artifactId>aai-schema</artifactId>
             <version>${version.aai-schema}</version>
         </dependency>
@@ -311,7 +311,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.onap.aai.aai-common</groupId>
+                                    <groupId>org.onap.aai.schema-service</groupId>
                                     <artifactId>aai-schema</artifactId>
                                     <version>${version.aai-schema}</version>
                                     <type>jar</type>
