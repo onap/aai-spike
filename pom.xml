@@ -37,7 +37,7 @@
     <properties>
         <docker.location>${basedir}/target</docker.location>
         <event.client.version>1.4.0</event.client.version>
-        <version.aai-schema>1.0.0</version.aai-schema>
+        <version.aai-schema>1.0.2</version.aai-schema>
         <version.aai-schema-ingest>1.4.1</version.aai-schema-ingest>
         <!-- Minimum code coverage percentage. Please update this figure as coverage increases to prevent any drops in
          coverage caused by new changes. Note that this figure cannot be lower than the ONAP requirement of 0.55 -->
